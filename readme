@@ -1,1 +1,26 @@
 hello world
+
+
+## LangChain + MCP Example
+
+このリポジトリには `examples` ディレクトリに LangChain と [Model Context Protocol (MCP)](https://modelcontextprotocol.io) を組み合わせた簡単なサンプルスクリプトを追加しています。Google Colab などの環境で以下の手順を実行することで動作を確認できます。
+
+### セットアップ
+
+```bash
+pip install langchain langchain-openai mcp
+```
+
+OpenAI API キーを環境変数 `OPENAI_API_KEY` として設定してください。
+
+### サーバーの起動とクライアントからの実行
+
+`examples/mcp_server.py` は FastMCP サーバーを標準入出力 (stdio) で起動し、LangChain を用いて質問へ回答する `ask_openai` ツールを提供します。
+
+`examples/mcp_client.py` は上記サーバーをサブプロセスとして起動し、`ask_openai` ツールを呼び出します。
+
+```bash
+python examples/mcp_client.py
+```
+
+実行すると MCP 経由で LLM が呼び出され、回答が標準出力に表示されます。
