@@ -1,10 +1,12 @@
 # main.py
+import argparse
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
 from huggingface_hub import snapshot_download
 from langchain_huggingface import HuggingFacePipeline
 from langchain.prompts import PromptTemplate
 from langchain_core.runnables import RunnableSequence
+from mcp.server.fastmcp import FastMCP, Context
 
 # モデルのダウンロード（キャッシュに保存）
 model_path = snapshot_download(
@@ -42,10 +44,32 @@ prompt = PromptTemplate(
 # RunnableSequence構成（プロンプト→LLM）
 chain: RunnableSequence = prompt | llm
 
+# MCP server setup
+server = FastMCP()
+
+@server.tool()
+async def ask_local(prompt: str, ctx: Context) -> str:
+    """Answer a question using the local model."""
+    result = chain.invoke({"question": prompt})
+    return result
+
 if __name__ == "__main__":
-    # 質問を入力
-    q = input("質問を入力してください: ")
-    # 実行
-    response = chain.invoke({"question": q})
-    # 結果表示
-    print("AIの回答:", response)
+    parser = argparse.ArgumentParser(
+        description="Run a simple Hugging Face model or start an MCP server"
+    )
+    parser.add_argument(
+        "--serve",
+        action="store_true",
+        help="Run as an MCP server communicating over stdio",
+    )
+    args = parser.parse_args()
+
+    if args.serve:
+        try:
+            server.run("stdio")
+        except KeyboardInterrupt:
+            pass
+    else:
+        q = input("質問を入力してください: ")
+        response = chain.invoke({"question": q})
+        print("AIの回答:", response)

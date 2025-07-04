@@ -11,3 +11,9 @@ python -m pip install huggingface_hub
 
 # スクリプトを実行
 python main.py
+
+# MCP サーバーモードで実行
+python main.py --serve
+
+# MCP クライアントからの呼び出し例
+python examples/mcp_client.py
