@@ -65,10 +65,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.serve:
-        try:
-            server.run("stdio")
-        except KeyboardInterrupt:
-            pass
     else:
         q = input("質問を入力してください: ")
         response = chain.invoke({"question": q})
