@@ -65,6 +65,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.serve:
+        server.run("stdio")
     else:
         q = input("質問を入力してください: ")
         response = chain.invoke({"question": q})
